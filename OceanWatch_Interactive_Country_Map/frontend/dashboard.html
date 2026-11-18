@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>OceanWatch · Marine Pollution Detection</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<link rel="stylesheet" href="css/styles.css?v=6"></head>
+<body>
+<header><div class="brand"><span class="logo">◉</span><div><b>OceanWatch</b><small>Satellite pollution screening · Sentinel-1 / Sentinel-2 · <span style="color:var(--ok)">build v6 (key-free maps)</span></small></div></div>
+  <nav style="display:flex;gap:14px;align-items:center"><a href="/" style="color:var(--deb);text-decoration:none">Home</a><a href="/analyze.html" style="color:var(--deb);text-decoration:none">Analyze image</a></nav><div class="stats" id="stats"></div><button id="about" class="ghost">How it works</button></header>
+<div id="demo" class="offline demo" hidden><b>Offline demo mode:</b> showing built-in synthetic sample alerts (reviews are saved in this browser only). Start the backend with <code>run.bat</code> / <code>./run.sh</code> for the live pipeline. <button onclick="location.reload()">Retry backend</button></div>
+<div id="conn" class="offline" hidden><b>Backend not reachable.</b> <span id="err"></span> Start it by double-clicking <code>run.bat</code> (Windows) or running <code>./run.sh</code> (Mac/Linux), then open <a href="http://localhost:8000">http://localhost:8000</a>. This page retries automatically.</div>
+<main>
+  <aside class="panel" id="left">
+    <h3>Filters</h3>
+    <label>Pollutant<select id="f-kind"><option value="">All</option><option value="oil_like">Oil-like features (SAR)</option><option value="suspected_debris">Suspected debris (optical)</option></select></label>
+    <label>Review status<select id="f-status"><option value="">All</option><option>pending</option><option>confirmed</option><option>rejected</option><option>field_check</option></select></label>
+    <label>Min. confidence <b id="conf-val">20%</b><input id="f-conf" type="range" min="0" max="100" value="20"></label>
+    <label>Sort by<select id="f-sort"><option value="conf">Confidence</option><option value="area">Area</option><option value="date">Most recent</option></select></label>
+    <h3>Confidence distribution</h3><div id="hist"></div><div class="histax"><span>0%</span><span>50%</span><span>100%</span></div>
+    <div class="row" style="margin-top:12px"><button id="export">Export GeoJSON</button><button id="reset" class="ghost">Reset demo</button></div>
+    <h3>Alerts <span id="count"></span></h3><ul id="list"></ul>
+  </aside>
+  <div id="map"></div>
+  <aside class="panel" id="right"><div class="empty">Choose a country from the map control, or click anywhere on the map to search for nearby candidate alerts. Select a result to inspect provenance and review it.</div></aside>
+</main>
+<div class="banner">Map clicks search the included alert catalogue within your selected radius. Alert records are <b>synthetic demo data</b>, not live global observations or confirmed pollution. A location with no records is marked as “no indexed candidates”, not pollution-free.</div>
+<dialog id="aboutdlg"><h2>How OceanWatch works</h2>
+<ol><li><b>Sentinel-1 SAR</b> finds dark sea-surface patches (possible oil), day or night, through cloud.</li>
+<li><b>Sentinel-2 optical</b> finds spectrally anomalous floating patches (possible debris) in clear weather.</li>
+<li>Each candidate gets a confidence score and <b>look-alike warnings</b> (low wind, seaweed, sub-pixel mixing, cloud).</li>
+<li>An <b>analyst confirms, rejects or requests a field check</b>. Nothing is a confirmed pollutant until then.</li></ol>
+<p class="mut">Demo data is synthetic and the detector is a rule-based baseline; no trained model is used yet.</p>
+<form method="dialog"><button>Close</button></form></dialog>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="data/demo_alerts.js?v=6"></script>
+<script src="js/app.js?v=6"></script></body></html>
